@@ -5,46 +5,174 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.example.redeappcompose.ui.theme.RedeAppComposeTheme
-import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.redeappcompose.ui.theme.RedeAppComposeTheme
 import kotlinx.coroutines.*
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
+
+
+
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             var isDarkTheme by remember { mutableStateOf(false) }
+            RedeAppComposeTheme(isDarkTheme = isDarkTheme, onToggleTheme = {isDarkTheme = !isDarkTheme}) {
 
-            RedeAppComposeTheme(isDarkTheme = isDarkTheme,
-                onToggleTheme = { isDarkTheme = !isDarkTheme }) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    IpAddressScreen(
-                        isDarkTheme = isDarkTheme,
-                        onToggleTheme = { isDarkTheme = !isDarkTheme })
-                }
+                App(isDarkTheme = isDarkTheme, onToggleTheme = {isDarkTheme = !isDarkTheme})
+
+               /* IpAddressScreen(
+                    isDarkTheme = isDarkTheme,
+                    onToggleTheme = { isDarkTheme = !isDarkTheme }*/
+
+
+
             }
         }
     }
 }
 
+
+
 @Composable
+fun App(isDarkTheme: Boolean, onToggleTheme: () -> Unit) {
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    val navController = rememberNavController()
+
+    ModalDrawer(modifier = Modifier.fillMaxSize(),
+        drawerState = drawerState,
+        scrimColor = Color.Transparent,
+        gesturesEnabled = drawerState.isOpen,
+        drawerContent = {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("Item 1")
+                Text("Item 2")
+                Box(modifier = Modifier.padding(16.dp)) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    )
+                    {
+                        Button(modifier = Modifier.align(alignment = Alignment.Start),
+                            onClick = { onToggleTheme() }) {
+                            Text(text = if (isDarkTheme) "Tema Escuro" else "Tema Claro")
+                        }
+                    }
+                }
+
+            }
+        },
+        content = {
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        title = { Text("Rede App") },
+                        navigationIcon = {
+                            IconButton(
+                                onClick = { scope.launch { drawerState.open() } }
+                            ) {
+                                Icon(Icons.Filled.Menu, contentDescription = "Open Drawer")
+                            }
+                        }
+                    )
+                },
+                content = { paddingValues ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                    ) {
+                        NavHost(
+                            navController = navController,
+                            startDestination = Screen.Home.route
+                        ) {
+                            composable(Screen.Home.route) { HomeScreen() }
+                            composable(Screen.Tela1.route) { Tela1Screen() }
+                            composable(Screen.Tela2.route) { Tela2Screen() }
+                        }
+                    }
+                }
+            )
+        }
+    )
+}
+sealed class Screen(val route: String) {
+    object Home : Screen("home")
+    object Tela1 : Screen("tela1")
+    object Tela2 : Screen("tela2")
+}
+
+
+/*fun IpAddressScreen(isDarkTheme: Boolean, onToggleTheme: () -> Unit){
+
+    Box(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        )
+        {
+            Button(modifier = Modifier.align(alignment = Alignment.Start),
+                onClick = { onToggleTheme() }) {
+                Text(text = if (isDarkTheme) "Tema Escuro" else "Tema Claro")
+            }
+        }
+    }
+}*/
+
+@Composable
+fun HomeScreen(){
+
+}
+
+@Composable
+fun Tela1Screen(){
+
+}
+
+@Composable
+fun Tela2Screen() {
+
+}
+
+
+
+
+
+
+/*@Composable
 fun IpAddressScreen(isDarkTheme: Boolean, onToggleTheme: () -> Unit) {
-    var host by remember { mutableStateOf("") }
+
+    Box(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        )
+        {
+            Button(modifier = Modifier.align(alignment = Alignment.Start),
+                onClick = { onToggleTheme() }) {
+                Text(text = if (isDarkTheme) "Tema Escuro" else "Tema Claro")} }}}*/
+    /*var host by remember { mutableStateOf("") }
     var output by remember { mutableStateOf("") }
+    var isPinging by remember { mutableStateOf(false) }
+    val outputState = remember { mutableStateOf(output) }
+    val pingJob = remember { mutableStateOf<Job?>(null) }
+
+
 
 
     Box(modifier = Modifier.padding(16.dp)) {
@@ -77,27 +205,33 @@ fun IpAddressScreen(isDarkTheme: Boolean, onToggleTheme: () -> Unit) {
                     label = { Text("Host or IP Address") },
                     modifier = Modifier.weight(1f)
 
-                    )
+                )
 
-                Button(onClick = {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val pingResult = ping(host, 1)
-                        pingResult.collect { line ->
-                            withContext(Dispatchers.Main) {
-                                output += "$line\n"
+                Button(
+                    onClick = {
+                        isPinging = !isPinging
+                        if (isPinging) {
+                            isPinging = true
+                            pingJob.value = CoroutineScope(Dispatchers.IO).launch {
+                                pingContinuously(host, outputState)
+
+
                             }
-                            delay(1000L)
 
-
+                        } else {
+                            pingJob.value?.cancel()
+                            isPinging = false
+                            outputState.value = "Ping interrompido.\n"
                         }
-
-                    }
-                }, modifier = Modifier.width(IntrinsicSize.Min).padding(16.dp)) {
-                    Text("Ping")
+                    }, modifier = Modifier
+                        .width(IntrinsicSize.Min)
+                        .padding(16.dp)
+                ) {
+                    Text(if (isPinging) "Parar Ping" else "Iniciar Ping")
                 }
             }
             Text(
-                output, modifier = Modifier
+                outputState.value, modifier = Modifier
                     .height(400.dp)
                     .verticalScroll(rememberScrollState())
             )
@@ -105,10 +239,41 @@ fun IpAddressScreen(isDarkTheme: Boolean, onToggleTheme: () -> Unit) {
 
         }
     }
-}
+*/
 
-//fazer uma lista para pingar sequencialmente
-suspend fun ping(host: String, count: Int) = flow {
+
+
+/*suspend fun pingContinuously(
+    host: String,
+    output: MutableState<String>
+) {
+    output.value = "Disparando $host:\n"
+    var sent = 0
+    var received = 0
+    try {
+        while (true) {
+            val process = ProcessBuilder("ping", "-c", "1", host).start()
+            val input = BufferedReader(InputStreamReader(process.inputStream))
+            var line: String?
+            while (input.readLine().also { line = it } != null) {
+                output.value += "$line\n"
+            }
+            input.close()
+            if (output.value.endsWith("64 bytes from $host")) {
+                received++
+            }
+            sent++
+            delay(1000L)
+        }
+    } catch (ex: Exception) {
+        output.value += "Failed to ping $host: ${ex.message}\n"
+    }
+}*/
+
+
+
+// pingar 4 vezes e mostrar o resultado dos 4 pings na tela
+/*suspend fun ping(host: String, count: Int) = flow {
     val output = mutableListOf<String>()
     var sent = 0
     var received = 0
@@ -139,8 +304,7 @@ suspend fun ping(host: String, count: Int) = flow {
         emit("Failed to ping $host: ${ex.message}\n")
     }
 
-}
-
+}*/
 
 //função responsavel por recuperar o endereço IP da rede wifi à qual o dispositivo está conectado.
 
@@ -181,6 +345,45 @@ suspend fun ping(host: String, count: Int) = flow {
 }*/
 
 
+//função compose para criar uma navigation bar
+/*bottomBar = {
+                        BottomNavigation {
+                            val navBackStackEntry by navController.currentBackStackEntryAsState()
+                            val currentRoute = navBackStackEntry?.destination?.route
+                            val items = listOf(
+                                Screen.Home,
+                                Screen.Tela1,
+                                Screen.Tela2
+                            )
+                            items.forEach { screen ->
+                                BottomNavigationItem(
+                                    icon = { Icon(screen.icon, contentDescription = null) },
+                                    label = { Text(screen.title) },
+                                    selected = currentRoute == screen.route,
+                                    onClick = {
+                                        navController.navigate(screen.route) {
+
+                                            popUpTo(navController.graph.startDestinationRoute!!) {
+                                                saveState = true
+                                            }
+
+                                            launchSingleTop = true
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    },
+                    content = { paddingValues ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(paddingValues)
+                        ) {
+                            NavGraph(startDestination = Screen.Home)
+                        }
+                    }
+                )*/
 
 
 
