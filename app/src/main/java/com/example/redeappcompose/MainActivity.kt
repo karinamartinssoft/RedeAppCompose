@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -43,6 +44,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+fun DrawerContent(navController: NavController, isDarkTheme: Boolean, onToggleTheme: () -> Unit) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text("Home", modifier = Modifier.clickable { navController.navigate(Screen.Home.route) })
+        Text("Tela 1", modifier = Modifier.clickable { navController.navigate(Screen.Tela1.route) })
+        Text("Tela 2", modifier = Modifier.clickable { navController.navigate(Screen.Tela2.route) })
+        Box(modifier = Modifier.align(Alignment.Start).padding(16.dp)) {
+            Button(
+                onClick = { onToggleTheme() }
+            ) {
+                Text(text = if (isDarkTheme) "Tema Escuro" else "Tema Claro")
+            }
+        }
+    }
+}
 
 
 @Composable
@@ -51,29 +67,13 @@ fun App(isDarkTheme: Boolean, onToggleTheme: () -> Unit) {
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
 
-    ModalDrawer(modifier = Modifier.fillMaxSize(),
+    ModalDrawer(
+        modifier = Modifier.fillMaxSize(),
         drawerState = drawerState,
         scrimColor = Color.Transparent,
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text("Item 1")
-                Text("Item 2")
-                Box(modifier = Modifier.padding(16.dp)) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    )
-                    {
-                        Button(modifier = Modifier.align(alignment = Alignment.Start),
-                            onClick = { onToggleTheme() }) {
-                            Text(text = if (isDarkTheme) "Tema Escuro" else "Tema Claro")
-                        }
-                    }
-                }
-
-            }
+            DrawerContent(navController, isDarkTheme, onToggleTheme)
         },
         content = {
             Scaffold(
