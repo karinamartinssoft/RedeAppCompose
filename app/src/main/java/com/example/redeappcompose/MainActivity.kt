@@ -5,14 +5,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -45,21 +49,22 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun DrawerContent(navController: NavController, isDarkTheme: Boolean, onToggleTheme: () -> Unit) {
+fun DrawerContent(
+    navController: NavController,
+    isDarkTheme: Boolean,
+    onToggleTheme: () -> Unit
+) {
     Column(modifier = Modifier.padding(16.dp)) {
         Text("Home", modifier = Modifier.clickable { navController.navigate(Screen.Home.route) })
-        Text("Tela 1", modifier = Modifier.clickable { navController.navigate(Screen.Tela1.route) })
-        Text("Tela 2", modifier = Modifier.clickable { navController.navigate(Screen.Tela2.route) })
+        Text("Ping", modifier = Modifier.clickable { navController.navigate(Screen.Ping.route) })
+        Text("Speed Test", modifier = Modifier.clickable { navController.navigate(Screen.SpeedTest.route) })
         Box(modifier = Modifier.align(Alignment.Start).padding(16.dp)) {
-            Button(
-                onClick = { onToggleTheme() }
-            ) {
+            Button(onClick = { onToggleTheme() }) {
                 Text(text = if (isDarkTheme) "Tema Escuro" else "Tema Claro")
             }
         }
     }
 }
-
 
 @Composable
 fun App(isDarkTheme: Boolean, onToggleTheme: () -> Unit) {
@@ -73,7 +78,10 @@ fun App(isDarkTheme: Boolean, onToggleTheme: () -> Unit) {
         scrimColor = Color.Transparent,
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
-            DrawerContent(navController, isDarkTheme, onToggleTheme)
+            Column {
+                CustomToolbar(title = "Rede App")
+                DrawerContent(navController, isDarkTheme, onToggleTheme)
+            }
         },
         content = {
             Scaffold(
@@ -100,8 +108,8 @@ fun App(isDarkTheme: Boolean, onToggleTheme: () -> Unit) {
                             startDestination = Screen.Home.route
                         ) {
                             composable(Screen.Home.route) { HomeScreen() }
-                            composable(Screen.Tela1.route) { Tela1Screen() }
-                            composable(Screen.Tela2.route) { Tela2Screen() }
+                            composable(Screen.Ping.route) { PingScreen() }
+                            composable(Screen.SpeedTest.route) { SpeedTestScreen() }
                         }
                     }
                 }
@@ -109,10 +117,39 @@ fun App(isDarkTheme: Boolean, onToggleTheme: () -> Unit) {
         }
     )
 }
+@Composable
+fun CustomToolbar(
+    title: String,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(56.dp)
+        // Definindo cantos arredondados
+            .background(color = Color(0xFF6200EE))
+        // Cor roxa personalizada
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize().padding(12.dp).align(Alignment.Center)
+
+        ) {
+            Text(
+                text = title,
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+
+
+            )
+        }
+    }
+}
+
 sealed class Screen(val route: String) {
     object Home : Screen("home")
-    object Tela1 : Screen("tela1")
-    object Tela2 : Screen("tela2")
+    object Ping : Screen("ping")
+    object SpeedTest : Screen("speedtest")
 }
 
 
@@ -139,12 +176,12 @@ fun HomeScreen(){
 }
 
 @Composable
-fun Tela1Screen(){
+fun PingScreen(){
 
 }
 
 @Composable
-fun Tela2Screen() {
+fun SpeedTestScreen() {
 
 }
 
