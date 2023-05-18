@@ -5,15 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,17 +54,69 @@ fun DrawerContent(
     isDarkTheme: Boolean,
     onToggleTheme: () -> Unit
 ) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text("Home", modifier = Modifier.clickable { navController.navigate(Screen.Home.route) })
-        Text("Ping", modifier = Modifier.clickable { navController.navigate(Screen.Ping.route) })
-        Text("Speed Test", modifier = Modifier.clickable { navController.navigate(Screen.SpeedTest.route) })
-        Box(modifier = Modifier.align(Alignment.Start).padding(16.dp)) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        TextButton(
+            onClick = { navController.navigate(Screen.Home.route) }
+        ) {
+            Image(painter = painterResource(R.drawable.ic_home_24),  "Home",
+                modifier = Modifier.padding(start = 8.dp, end = 16.dp)
+            )
+            Text(
+                text = "Home",
+                modifier = Modifier.padding(start = 16.dp))
+        }
+        TextButton(
+            onClick = { navController.navigate(Screen.Ping.route) }
+        ) {
+            Image(painter = painterResource(R.drawable.ic_network_ping_24),  "Ping",
+                modifier = Modifier.padding(start = 8.dp)
+            )
+            Text(
+                text = "Ping",
+                modifier = Modifier.padding(start = 8.dp))
+        }
+        TextButton(
+            onClick = { navController.navigate(Screen.SpeedTest.route) }
+
+        ) {
+            Image(painter = painterResource(R.drawable.ic_speed_24),  "Speed",
+                modifier = Modifier.padding(start = 8.dp)
+            )
+            Text(
+                text = "Speed",
+                modifier = Modifier.padding(start = 8.dp))
+        }
+        Box(modifier = Modifier
+            .align(Alignment.Start)
+            .padding(16.dp)) {
             Button(onClick = { onToggleTheme() }) {
                 Text(text = if (isDarkTheme) "Tema Escuro" else "Tema Claro")
             }
         }
     }
 }
+@Composable
+fun TextButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+
+    Button(
+            onClick = onClick,
+            modifier = modifier
+                .fillMaxWidth()
+                .height(55.dp),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color.Transparent,
+                contentColor = MaterialTheme.colors.primary
+            )
+
+        ) {
+            content()
+        }
+    }
+
 
 @Composable
 fun App(isDarkTheme: Boolean, onToggleTheme: () -> Unit) {
@@ -126,12 +178,15 @@ fun CustomToolbar(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
-        // Definindo cantos arredondados
+            // Definindo cantos arredondados
             .background(color = Color(0xFF6200EE))
         // Cor roxa personalizada
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().padding(12.dp).align(Alignment.Center)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp)
+                .align(Alignment.Center)
 
         ) {
             Text(
