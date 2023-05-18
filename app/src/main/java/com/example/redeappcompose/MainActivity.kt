@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -58,33 +59,60 @@ fun DrawerContent(
         TextButton(
             onClick = { navController.navigate(Screen.Home.route) }
         ) {
-            Image(painter = painterResource(R.drawable.ic_home_24),  "Home",
-                modifier = Modifier.padding(start = 8.dp, end = 16.dp)
-            )
-            Text(
-                text = "Home",
-                modifier = Modifier.padding(start = 16.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+            ) {
+
+                Image(
+                    painter = painterResource(R.drawable.ic_home_24), "Home",
+                    modifier = Modifier.padding(start = 8.dp, end = 16.dp)
+                )
+                Text(
+                    text = "Home",
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Start
+                )
+            }
         }
         TextButton(
             onClick = { navController.navigate(Screen.Ping.route) }
         ) {
-            Image(painter = painterResource(R.drawable.ic_network_ping_24),  "Ping",
-                modifier = Modifier.padding(start = 8.dp)
-            )
-            Text(
-                text = "Ping",
-                modifier = Modifier.padding(start = 8.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_network_ping_24), "Ping",
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Ping",
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Start
+                )
+            }
         }
         TextButton(
             onClick = { navController.navigate(Screen.SpeedTest.route) }
 
         ) {
-            Image(painter = painterResource(R.drawable.ic_speed_24),  "Speed",
-                modifier = Modifier.padding(start = 8.dp)
-            )
-            Text(
-                text = "Speed",
-                modifier = Modifier.padding(start = 8.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_speed_24), "Speed",
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Speed",
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Start
+                )
+            }
         }
         Box(modifier = Modifier
             .align(Alignment.Start)
