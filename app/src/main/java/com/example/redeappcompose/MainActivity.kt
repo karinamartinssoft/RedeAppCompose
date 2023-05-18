@@ -66,11 +66,12 @@ fun DrawerContent(
 
                 Image(
                     painter = painterResource(R.drawable.ic_home_24), "Home",
-                    modifier = Modifier.padding(start = 8.dp, end = 16.dp)
+                    modifier = Modifier.padding(start = 8.dp)
                 )
                 Text(
                     text = "Home",
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).padding(start = 16.dp),
+                    fontSize = 16.sp,
                     textAlign = TextAlign.Start
                 )
             }
@@ -89,7 +90,9 @@ fun DrawerContent(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Ping",
-                    modifier = Modifier.weight(1f),
+
+                    modifier = Modifier.weight(1f).padding(start = 16.dp),
+                fontSize = 16.sp,
                     textAlign = TextAlign.Start
                 )
             }
@@ -109,7 +112,8 @@ fun DrawerContent(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Speed",
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).padding(start = 16.dp),
+                    fontSize = 16.sp,
                     textAlign = TextAlign.Start
                 )
             }
