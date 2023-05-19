@@ -25,6 +25,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.redeappcompose.dto.Screen
 import com.example.redeappcompose.ui.theme.RedeAppComposeTheme
 import kotlinx.coroutines.*
 
@@ -244,29 +245,7 @@ fun CustomToolbar(
     }
 }
 
-sealed class Screen(val route: String) {
-    object Home : Screen("home")
-    object Ping : Screen("ping")
-    object SpeedTest : Screen("speedtest")
-}
 
-
-/*fun IpAddressScreen(isDarkTheme: Boolean, onToggleTheme: () -> Unit){
-
-    Box(modifier = Modifier.padding(16.dp)) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        )
-        {
-            Button(modifier = Modifier.align(alignment = Alignment.Start),
-                onClick = { onToggleTheme() }) {
-                Text(text = if (isDarkTheme) "Tema Escuro" else "Tema Claro")
-            }
-        }
-    }
-}*/
 
 @Composable
 fun HomeScreen() {
@@ -280,7 +259,6 @@ fun PingScreen() {
     var isPinging by remember { mutableStateOf(false) }
     val outputState = remember { mutableStateOf<List<String>>(emptyList()) }
     val pingJob = remember { mutableStateOf<Job?>(null) }
-    var showErrorMessage by remember { mutableStateOf(false) }
 
     val receivedScaffoldState = rememberScaffoldState()
 
@@ -300,14 +278,14 @@ fun PingScreen() {
 
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .weight(1f)
+                .height(500.dp)
+                .width(500.dp)
                 .padding(8.dp)
                 .border(1.dp, Color.Gray, shape = RoundedCornerShape(8.dp))
         ) {
             LazyColumn(
                 modifier = Modifier.padding(8.dp),
-                contentPadding = PaddingValues()
+                contentPadding = PaddingValues(bottom = 8.dp)
             ) {
                 items(outputState.value) { line ->
                     Text(line, fontSize = 14.sp)
@@ -333,7 +311,7 @@ fun PingScreen() {
                 },
                 modifier = Modifier
                     .padding(5.dp)
-                    .width(100.dp)
+                    .width(200.dp)
             ) {
 
                 Text("Ping")
