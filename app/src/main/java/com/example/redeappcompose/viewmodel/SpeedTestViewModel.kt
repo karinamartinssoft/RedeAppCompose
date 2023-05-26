@@ -35,7 +35,7 @@ class SpeedTestViewModel : ViewModel() {
     ) {
         val listener = object : SpeedTestTask.ISpeedTestListener {
             override fun onCompletion(report: SpeedTestReport) {
-                val velocidadeString: BigDecimal? = report?.transferRateBit
+                val velocidadeString: BigDecimal? = report.transferRateBit
                 val velocidadeMbps = if (velocidadeString != null) {
                     try {
                         velocidadeString.toDouble() / 1_000_000
