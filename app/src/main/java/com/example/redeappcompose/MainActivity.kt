@@ -1,9 +1,12 @@
 package com.example.redeappcompose
 
+import com.example.redeappcompose.viewmodel.SpeedTestViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,8 +15,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -21,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -205,6 +209,7 @@ fun App(isDarkTheme: Boolean, onToggleTheme: () -> Unit) {
                             composable(Screen.Home.route) { HomeScreen() }
                             composable(Screen.Ping.route) { PingScreen() }
                             composable(Screen.SpeedTest.route) { SpeedTestScreen() }
+
                         }
                     }
                 }
@@ -246,7 +251,6 @@ fun CustomToolbar(
 }
 
 
-
 @Composable
 fun HomeScreen() {
 
@@ -255,7 +259,7 @@ fun HomeScreen() {
 @Composable
 fun PingScreen() {
     var host by remember { mutableStateOf("") }
-    var count by remember { mutableStateOf(4) }
+    val count by remember { mutableStateOf(4) }
     var isPinging by remember { mutableStateOf(false) }
     val outputState = remember { mutableStateOf<List<String>>(emptyList()) }
     val pingJob = remember { mutableStateOf<Job?>(null) }
@@ -263,7 +267,7 @@ fun PingScreen() {
     val receivedScaffoldState = rememberScaffoldState()
 
     LaunchedEffect(receivedScaffoldState) {
-        receivedScaffoldState?.drawerState?.close()
+        receivedScaffoldState.drawerState.close()
     }
 
     Column(modifier = Modifier.padding(1.dp)) {
@@ -295,7 +299,7 @@ fun PingScreen() {
         }
         Row(
             modifier = Modifier
-                .padding(2.dp)
+                .padding(5.dp)
                 .align(Alignment.CenterHorizontally)
         ) {
             Button(
@@ -322,10 +326,74 @@ fun PingScreen() {
 }
 
 @Composable
-fun SpeedTestScreen() {
+fun SpeedTestScreen(speedTestViewModel: SpeedTestViewModel = viewModel()) {
+    var velocidadeSpeed by remember { mutableStateOf(0.0) }
+    val coroutineScope = rememberCoroutineScope()
+    var snackbarVisible by remember { mutableStateOf(false) }
+    var mostrarResultado by remember { mutableStateOf(false) }
 
+    Column {
+        Text(
+            text = "Velocidade de Download",
+            style = MaterialTheme.typography.h5,
+            modifier = Modifier.padding(16.dp)
+        )
+
+        Text(
+                text = "Velocidade medida: $velocidadeSpeed Mbps",
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.padding(16.dp)
+            )
+
+
+        Button(
+            onClick = {
+                coroutineScope.launch {
+                    try {
+                        speedTestViewModel.testarVelocidade(
+                            coroutineScope,
+                            onCompletion = { novaVelocidade ->
+                                velocidadeSpeed = novaVelocidade
+                                mostrarResultado = true
+                            },
+                            onError = {
+                                snackbarVisible = true
+                                snackbarVisible = false
+                            }
+                        )
+                    } catch (e: Exception) {
+                        snackbarVisible = true
+                        delay(3000)
+                        snackbarVisible = false
+                    }
+                }
+            },
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(text = "Iniciar Teste")
+        }
+
+        if (snackbarVisible) {
+            ShowErrorSnackbar("Erro ao fazer o teste de velocidade")
+        }
+    }
 }
+@Composable
+fun ShowErrorSnackbar(errorMessage: String) {
+    var snackbarVisible by remember { mutableStateOf(true) }
 
+    if (snackbarVisible) {
+        LaunchedEffect(true) {
+            delay(3000)
+            snackbarVisible = false
+        }
+
+        Snackbar(
+            modifier = Modifier.padding(16.dp),
+            content = { Text(errorMessage) }
+        )
+    }
+}
 
 /*@Composable
 fun IpAddressScreen(isDarkTheme: Boolean, onToggleTheme: () -> Unit) {
